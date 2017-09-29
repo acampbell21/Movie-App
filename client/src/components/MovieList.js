@@ -6,7 +6,7 @@ const MovieList = ({ movies, updateMovie, deleteMovie }) => (
     { movies.map( movie =>
         <Movie
           key={movie.id}
-          {...movie}
+          movie={movie}
           updateMovie={updateMovie}
           deleteMovie={deleteMovie}
         />

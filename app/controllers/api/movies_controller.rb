@@ -14,8 +14,11 @@ class Api::MoviesController < ApplicationController
 
   def update
     movie = Movie.find(params[:id])
-    movie.update(complete: !movie.complete)
-    render json: movie
+    if movie.update(movie_params)
+      render json: movie
+    else
+      # render 404
+    end
   end
 
   def destroy

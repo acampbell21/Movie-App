@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MovieForm from './components/MovieForm';
 import MovieList from './components/MovieList';
+import axios from 'axios';
 
 class App extends Component {
   state = { movies: [] }
@@ -12,9 +13,9 @@ class App extends Component {
     //TODO make a call to our rails server to get Movies
   }
 
-  addMovie = (title) => {
+  addMovie = (title, summary, release_year) => {
     //TODO make api call to rails server to add movie
-    let movie = { title };
+    let movie = { title, summary, release_year };
     fetch('./api/movies', {
       method: 'POST',
       headers: {
@@ -30,17 +31,25 @@ class App extends Component {
     //TODO update state
   }
 
-  updateMovie = (id) => {
+  updateMovie = (id, title, summary, release_year) => {
     //TODO make api call to update movie
-    fetch(`api/movies/${id}`, { method: 'PUT' })
+    let movie = { title, summary, release_year };
+    fetch(`/api/movies/${id}`,
+      { method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(movie)
+      })
       .then( res => res.json() )
       .then( movie => {
-        let movies = this.state.movies.map( t => {
-          if (t.id === id)
+        let movies = this.state.movies.map( m => {
+          if (m.id === id)
             return movie
-          return t
+          return m;
         });
-
+        //TODO Get Help on Editing a Movie
         this.setState({ movies });
       })
   }
@@ -49,14 +58,14 @@ class App extends Component {
     fetch(`/api/movies/${id}`, { method: 'DELETE' })
     .then( () => {
       const { movies } = this.state;
-      this.setState({ movies: movies.filter(t => t.id !== id) })
+      this.setState({ movies: movies.filter(m=> m.id !== id) })
     })
   }
 
   render() {
    return (
      <div>
-       <MovieForm addMovie={this.addMovie} />
+       <MovieForm addMovieFunction={this.addMovie} />
        <MovieList
          movies={this.state.movies}
          updateMovie={this.updateMovie}
